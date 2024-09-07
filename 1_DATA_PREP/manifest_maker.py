@@ -1,6 +1,7 @@
 import os
 import soundfile as sf
 from tqdm import tqdm
+import argparse
 
 def get_audio_duration_in_frames(file_path):
     with sf.SoundFile(file_path) as audio_file:
@@ -29,16 +30,32 @@ def create_manifest(root_directory, manifest_path, split):
             frames = get_audio_duration_in_frames(file_path)
             manifest_file.write(f"{relative_path}\t{frames}\n")
 
-# Set the root directory containing audio files and the path to the manifest file
-manifest_directory = "/work/tc062/tc062/s2517781/11_FISHER/len_manifests"
 
-# check exists
-os.makedirs(manifest_directory, exist_ok=True)
+def main():
+    
+    parser = argparse.ArgumentParser()
+    
+    parser.add_argument("--manifest-dir", type=str, help="path to output manifest directory")
+    parser.add_argument("--root-dir", type=str, help="path to audio dir split")
+    parser.add_argument("--lang-code", type=str, help="short language code for source or target language")
+    parser.add_argument("--split", type=str, help="split name: train, dev etc.")
+    
+    args = parser.parse_args()
+    
+    # Set the root directory containing audio files and the path to the manifest file
+    manifest_directory = args.manifest_dir
 
-root_directory = "/scratch/space1/tc062/s2517781/FISHER/SRC_AUDIO/test"
-lang = 'es'
-folder = 'test'
-manifest_path = f"{manifest_directory}/{lang}_{folder}.tsv"
+    # check exists
+    os.makedirs(manifest_directory, exist_ok=True)
 
-# Create the manifest file
-create_manifest(root_directory, manifest_path, split=folder)
+    root_directory = args.root_dir
+    lang = args.lang_code
+    folder = args.split
+    manifest_path = f"{manifest_directory}/{lang}_{folder}.tsv"
+
+    # Create the manifest file
+    create_manifest(root_directory, manifest_path, split=folder)
+
+
+if __name__ == "__main__":
+    main()
