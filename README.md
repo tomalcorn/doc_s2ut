@@ -17,11 +17,12 @@ Unit config | Unit size | Vocoder dataset | Model
 
 ## 1: Data Prep
 
-1. Run `dir1vdir2.sh` to move any file in `SRC_AUDIO` and not `TGT_AUDIO` and vice versa to backup directories.
-2. Run `convert_and_downsample_audio.py` to convert source and/or target audio to wav if necessary and to downsample to 16kHz. `--input_dir` should be `SRC_AUDIO` or `TGT_AUDIO`.
+1. Optional: Run `dir1vdir2.sh` to move any file in `SRC_AUDIO` and not `TGT_AUDIO` and vice versa to backup directories.
+2. Run `convert_and_downsample.sh` to convert source and/or target audio to wav if necessary and to downsample to 16kHz. `--input_dir` should be path to `SRC_AUDIO` or `TGT_AUDIO`.
 3. Split downsampled files in `SRC_AUDIO` and `TGT_AUDIO` into splits, eg `train`, `dev`, `test`...
 4. In `MANIFESTS` create `src_$SPLIT.tsv` and `tgt_$SPLIT.tsv` for each split, with format:
 `$FILE_ID.wav \t "corresponding text"`
 1. Run `manifest_maker.sh` to create manifest files for `SRC_AUDIO` and `TGT_AUDIO` with the relevant arguments.
 2. Run `quantise_tgts.sh` to quantise target audio for each split in `TGT_AUDIO`
-3. Run `data_prep.sh` with relevant arguments
+3. Run `data_prep.sh` with relevant arguments.
+4. Run `dict_maker.sh` to prepare multitask information. Currently only `'source_letter'`, `'target_letter'` and/or `'decoder_tgt_ctc'` are supported.

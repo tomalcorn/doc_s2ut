@@ -6,9 +6,8 @@ SPLIT1="train"
 SPLIT2="dev"
 # etc etc
 
-# Absolute path to SRC_AUDIO and TGT_AUDIO
-SRC_AUDIO=""
-TGT_AUDIO=""
+SRC_AUDIO_PATH=""
+TGT_AUDIO_PATH=""
 # Absolute path to DATA_ROOT directory
 DATA_ROOT=""
 
