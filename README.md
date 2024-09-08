@@ -4,7 +4,7 @@ To begin data preparation for S2UT or document-level S2UT, you need:
 - `SRC_AUDIO` and `TGT_AUDIO` directories with audio files for paired source and target audio. Each pair of files should be named identically in their respective directories.
 - Optional: If you only have target text, use 6: TTS to create TGT_AUDIO from target text directory
 - Information on how to split data in training, validation and test sets
-- Pretrained checkpoints for hubert model, quantisation model, vocoder and vocoder config downloaded into 0_MODELS:
+- Pretrained checkpoints for hubert model, quantisation model, vocoder and vocoder config downloaded into 0_PRETRAINED_MODELS:
   
 ### Unit-based HiFi-GAN Vocoder
 Unit config | Unit size | Vocoder dataset | Model

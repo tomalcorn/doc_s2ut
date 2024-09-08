@@ -1,5 +1,5 @@
-DATA_ROOT="/Users/tomalcorn/Documents/University/pg/diss/DATA_ROOT"
-MODEL_DIR="/Users/tomalcorn/Documents/University/pg/diss/2_TRAINING/models"
+DATA_ROOT=""
+MODEL_DIR=""
 
 cd fairseq/
 

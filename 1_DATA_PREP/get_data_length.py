@@ -17,7 +17,7 @@ def sum_audio_duration(folder_path, split):
 
 
 
-folder_path_root = '/scratch/space1/tc062/s2517781/FISHER/SRC_AUDIO'
+folder_path_root = ''
 splits = ['train', 'dev', 'dev2', 'test']
 total_seconds = 0
 for split in splits:
