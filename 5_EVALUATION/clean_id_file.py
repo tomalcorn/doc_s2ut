@@ -1,4 +1,6 @@
+import os
 import csv
+import argparse
 
 def filter_tsv_by_missing_ids(tsv_file, missing_ids_file, output_file):
     # Read the missing IDs from the file and store them in a set
@@ -16,8 +18,33 @@ def filter_tsv_by_missing_ids(tsv_file, missing_ids_file, output_file):
                 writer.writerow(line)
 
 # Example usage
-tsv_file = "/work/tc062/tc062/s2517781/DATA_ROOT_FISHER/test.tsv"
-missing_ids_file = "/work/tc062/tc062/s2517781/5_EVALUATION/missing_ids.txt"
-output_file = "/work/tc062/tc062/s2517781/5_EVALUATION/test_cleaned.tsv"
+parser = argparse.ArgumentParser()
+    
+parser.add_argument(
+    "--variant",
+    type=str,
+    help = "base name of directory in 4_INFERENCE"
+)
+parser.add_argument(
+    "--data-root",
+    type=str,
+    help = "DATA_ROOT basename"
+)
+
+args = parser.parse_args()
+
+variant = args.variant
+data_root = args.data_root
+
+tsv_file = f"{data_root}/test.tsv"
+
+
+missing_ids_dir = f"{data_root}/../5_EVALUATION/missing_ids"
+cleaned_dir = f"{data_root}/../5_EVALUATION/cleaned"
+os.makedirs(missing_ids_dir, exist_ok=True)
+os.makedirs(cleaned_dir, exist_ok=True)
+
+missing_ids_file = f"{missing_ids_dir}/{variant}.txt"
+output_file = f"{cleaned_dir}/{variant}.tsv"
 
 filter_tsv_by_missing_ids(tsv_file, missing_ids_file, output_file)

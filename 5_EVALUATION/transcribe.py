@@ -4,11 +4,18 @@ import whisper
 from tqdm import tqdm
 import re
 from natsort import natsorted
+import argparse
 
-def asr_targets(in_folder, id_file, outfile, hypothesis_dict):
+def asr_targets(data_root, in_folder, id_file, outfile, hypothesis_dict):
     # Set up Whisper client
     print("Loading whisper model...")
-    model = whisper.load_model("/work/tc062/tc062/s2517781/.cache/whisper/medium.en.pt")
+    model_path = f"{data_root}/../0_PRETRAINED_MODELS/whisper/medium.en.pt"
+
+    # Assert that the path exists
+    assert os.path.exists(model_path), f"Model path does not exist: {model_path}"
+
+    # Load the model
+    model = whisper.load_model(model_path)
     print("Whisper model complete.")
 
     # Get the number of wav files in the root folder and its sub-folders
@@ -49,17 +56,34 @@ def init_dictionary(reference_tsv):
     return hypothesis_dict
 
 def main():
-    folder = "fisher_1"
+    
+    parser = argparse.ArgumentParser()
+    
+    parser.add_argument(
+        "--variant",
+        type=str,
+        help = "base name of directory in 4_INFERENCE"
+    )
+    parser.add_argument(
+        "--data-root",
+        type=str,
+        help = "DATA_ROOT basename"
+    )
+    
+    args = parser.parse_args()
+    
+    variant = args.variant
+    data_root = args.data_root
     
     # tsv with ids and gold sentences
-    tgt_test_tsv = "/work/tc062/tc062/s2517781/DATA_ROOT_FISHER/tgt_test.tsv"
-    pred_wav_folder = f"/work/tc062/tc062/s2517781/4_INFERENCE/{folder}"
-    tgt_file = f"/work/tc062/tc062/s2517781/5_EVALUATION/text_out/{folder}.tsv"
+    tgt_test_tsv = f"{data_root}/tgt_test.tsv"
+    pred_wav_folder = f"{data_root}/../4_INFERENCE/{variant}"
+    tgt_file = f"{data_root}/../5_EVALUATION/text_out/{variant}.tsv"
     # Cleaned tsv file with ids in the same order as the wav files
-    id_file = "/work/tc062/tc062/s2517781/5_EVALUATION/test_cleaned.tsv"
+    id_file = f"{data_root}/../5_EVALUATION/cleaned/{variant}.tsv"
     
     hypothesis_dict = init_dictionary(tgt_test_tsv)
-    hypothesis_dict = asr_targets(in_folder=pred_wav_folder, id_file=id_file, hypothesis_dict=hypothesis_dict, outfile=tgt_file)
+    hypothesis_dict = asr_targets(data_root, in_folder=pred_wav_folder, id_file=id_file, hypothesis_dict=hypothesis_dict, outfile=tgt_file)
 
 if __name__ == "__main__":
     main()

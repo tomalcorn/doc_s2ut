@@ -1,3 +1,4 @@
+import os
 from natsort import natsorted
 import re
 import argparse
@@ -69,8 +70,13 @@ args = parser.parse_args()
 variant = args.variant
 data_root = args.data_root
 
-infile = f"/work/tc062/tc062/s2517781/4_INFERENCE/{variant}/generate-test.txt"
-tsv_file = f"/work/tc062/tc062/s2517781/{data_root}/test.tsv"
-outfile = f"/work/tc062/tc062/s2517781/5_EVALUATION/missing_ids_{variant}.txt"
+missing_ids_dir = f"{data_root}/../5_EVALUATION/missing_ids"
+cleaned_dir = f"{data_root}/../5_EVALUATION/cleaned"
+os.makedirs(missing_ids_dir, exist_ok=True)
+os.makedirs(cleaned_dir, exist_ok=True)
+
+infile = f"{data_root}/../4_INFERENCE/{variant}/generate-test.txt"
+tsv_file = f"{data_root}/test.tsv"
+outfile = f"{missing_ids_dir}/{variant}.txt"
 
 find_missing(infile, tsv_file, outfile)

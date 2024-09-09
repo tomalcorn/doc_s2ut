@@ -3,7 +3,7 @@ import csv
 import numpy as np
 from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
 from sacrebleu.metrics import BLEU, CHRF, TER
-# from comet import load_from_checkpoint
+from comet import load_from_checkpoint
 import argparse
 from tqdm import tqdm
 import sys
@@ -31,17 +31,21 @@ def calculate_bleu(reference_sent, target_sent, smoothing_method):
     return score
 
 def calculate_sacrebleu(refs, tgts):
-    bleu = BLEU(lowercase=True)
+    bleu = BLEU()
     scores = bleu.corpus_score(tgts, refs)
-    print(bleu.get_signature())
     return(scores)
 
 def score_targets(tgt_file, outfile, src_dict, comet_model_path, batch_size, use_comet, smoothing_method):
     
     if use_comet:
         # Load COMET model
+        print("Loading COMET model...")
+        
+        assert os.path.exists(comet_model_path), f"COMET model does not exist: {comet_model_path}. Should look like this: ./0_MODELS/models--Unbabel--wmt22-comet-da/snapshots/$code/checkpoints/model.ckpt"
         comet_model = load_from_checkpoint(comet_model_path, reload_hparams=True)
-    
+
+        print ("Loaded COMET model.")
+        
     bleu_scores = []
     comet_data = []
     comet_scores = []
@@ -87,10 +91,11 @@ def score_targets(tgt_file, outfile, src_dict, comet_model_path, batch_size, use
                 if len(comet_data) == batch_size or line_num == total_lines:
                     with suppress_stdout_stderr():
                         batch_comet_scores = comet_model.predict(comet_data, batch_size=len(comet_data), gpus=0)
-                    comet_scores.extend(batch_comet_scores.scores)
+                        batch_comet_scores = [score * 100 for score in batch_comet_scores.scores]
+                    comet_scores.extend(batch_comet_scores)
                     
                     # Write scores for this batch
-                    for i, (bleu, comet) in enumerate(zip(bleu_scores[-len(comet_data):], batch_comet_scores.scores)):
+                    for i, (bleu, comet) in enumerate(zip(bleu_scores[-len(comet_data):], batch_comet_scores)):
                         writer.writerow([comet_data[i]['mt'][:40], bleu, comet])
                     
                     # Clear the batch
@@ -105,7 +110,6 @@ def score_targets(tgt_file, outfile, src_dict, comet_model_path, batch_size, use
         
         print(avg_bleu)
         sacrebleu_scores = calculate_sacrebleu(refs, hypos)
-        print(sacrebleu_scores)
         avg_comet = np.average(comet_scores) if comet_scores else "N/A"
         
         writer.writerow(["-" * 50])
@@ -127,30 +131,31 @@ def main():
     parser = argparse.ArgumentParser()
     
     parser.add_argument("--tgt", type=str, help='name of experiment')
-    parser.add_argument("--tgt_folder", type=str, help='transcriptions folder')
-    parser.add_argument('--output_folder', type=str, help='path to folder for scores')
-    parser.add_argument('--src_tsv', type=str, help='path to source tsv file with id, source sentence')
-    parser.add_argument('--comet_ckpt', type=str, help='path to comet model')
-    parser.add_argument('--use_comet', action='store_true', help='Use Comet for experiment tracking.')
-    parser.add_argument('--batch_size', type=int, help='batch size for comet model')
-    parser.add_argument('--bleu_smoothing_method', type=int, default=7, help='smoothing method variant for bleu score')
+    parser.add_argument("--data-root", type=str, help='transcriptions folder')
+    parser.add_argument('--comet-ckpt', type=str, help='path to comet model')
+    parser.add_argument('--use-comet', action='store_true', help='Use Comet for experiment tracking.')
+    parser.add_argument('--batch-size', type=int, default=32, help='batch size for comet model')
+    parser.add_argument('--bleu-smoothing-method', type=int, default=7, help='smoothing method variant for bleu score')
     
     args = parser.parse_args()
     
-    use_comet = args.use_comet
     tgt = args.tgt
-    tgt_folder = args.tgt_folder
-    scores_folder = args.output_folder
-    src_tsv = args.src_tsv
-    tgt_file = f"{tgt_folder}/{tgt}.tsv"
-    outfile = f"{scores_folder}/{tgt}_bleu_comet.tsv"
+    data_root = args.data_root
+    comet_model_path = args.comet_ckpt
+    use_comet = args.use_comet
+    batch_size = args.batch_size
     smoothing_method = f"method{args.bleu_smoothing_method}"
     
-    # Path to your pre-downloaded COMET model
-    comet_model_path = args.comet_ckpt
+    src_tsv = f"{data_root}/src_test.tsv"
+    tgt_folder = f"{data_root}/../5_EVALUATION/text_out"
+    tgt_file = f"{tgt_folder}/{tgt}.tsv"
+    scores_folder = f"{data_root}/../5_EVALUATION/scores_out"
+    os.makedirs(scores_folder, exist_ok=True)
+    if use_comet:
+        outfile = f"{scores_folder}/{tgt}_bleu_comet.tsv"
+    else:
+        outfile = f"{scores_folder}/{tgt}_bleu.tsv"
     
-    # Set batch size
-    batch_size = args.batch_size
     
     src_dict = init_dictionary(src_tsv)
     score_targets(tgt_file, outfile, src_dict, comet_model_path, batch_size, use_comet, smoothing_method)
