@@ -76,12 +76,30 @@ fairseq-train $DATA_ROOT \
 
 ## 4: Inference
 
-- Run `infer.sh` with the given arguments to generate discrete unit sequences for the test set.
-- Run `u2wav.sh` with given arguments to convert discrete unit sequences to .wav files
+1. Run `infer.sh` with the given arguments to generate discrete unit sequences for the test set.
+2. Run `u2wav.sh` with given arguments to convert discrete unit sequences to .wav files
   
 ## 5: Evaluation
 
 To evaluate the produced .wav files first they must be transcribed after which they can be scored. The scoring methods provided here are ASR-Bleu and ASR-COMET. I use `Whisper-medium` for the transcription and `SACREBLEU` for scoring. To use these methods, first run `download_whisper.py` and/or `download_comet.py` with the path to `0_PRETRAINED_MODELS` as the only argument.
+
+1. Run `0_transcribe.sh` with the given arguments. `$VARIANT` should be the name of the folder in `4_INFERENCE/results`
+2. Run `1_score.sh` with the given arguments. If using COMET set `--use-comet` and set `$COMET_CKPT` to the `model.pt` file downloaded in `0_PRETRAINED_MODELS`
+
+## 6: AFS
+
+Training and using AFS is done in 3 stages. First a separate encoder-decoder ASR model is trained. Then this ASR model is finetuned with AFS inserted between the encoder and decoder. Finally, the decoder is dropped, the encoder and afs modules are frozen into a feature extractor. An S2UT model can now be trained, where the standard subsample module in the encoder is replaced by the AFS feature extractor.
+
+1. Download ASR data. I used Voxpopuli Spanish audio to English text data available here:
+
+* [Voxpopuli data](https://github.com/facebookresearch/voxpopuli)
+
+Then split data into two sets for asr training and asr + afs finetuning. Split each set into training, validation and testing subsets.
+2. In `0_prep` run `0_prep_asr_data.sh` with given arguments. Run twice with `$AUDIOROOT` set to path to dataset used for asr training, then for finetuning. `$TRANSCRIPTIONS` should be a .tsv file, for example:
+```
+TRANSCRIPTIONS="${AFS_DATA_ROOT}/manifests/asr_pretraining.tsv"
+```
+3. 
 
 
 

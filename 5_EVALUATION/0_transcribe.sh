@@ -1,7 +1,6 @@
 #!/bin/bash
 
 DATA_ROOT=""
-# Name of folder in 4_INFERENCE/results
 VARIANT=""
 
 # Inference doesn't always produce output for every item in test. First steps are to clean the id file so transcriptions match. 

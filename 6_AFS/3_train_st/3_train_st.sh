@@ -1,7 +1,7 @@
 DATA_ROOT="/Users/tomalcorn/Documents/University/pg/diss/DATA_ROOT"
 MODEL_DIR="/Users/tomalcorn/Documents/University/pg/diss/mine/models"
 SAVE_DIR="/Users/tomalcorn/Documents/University/pg/diss/7_AFS/ST"
-FEAT_EXTRACTOR="/Users/tomalcorn/Documents/University/pg/diss/7_AFS/ASR_AFS_SAVE_BIG/checkpoint_best.pt"
+FEAT_EXTRACTOR="/Users/tomalcorn/Documents/University/pg/diss/7_AFS/LOCAL/checkpoint_best.pt"
 FEAT_EXTRACTOR_ARGS="/Users/tomalcorn/Documents/University/pg/diss/7_AFS/feat_extractor_args.tsv"
 
 cd fairseq/
@@ -17,5 +17,5 @@ fairseq-train $DATA_ROOT \
   --save-dir ${SAVE_DIR} \
   --lr 0.0005 --lr-scheduler inverse_sqrt --warmup-init-lr 1e-7 --warmup-updates 10000 \
   --optimizer adam --adam-betas "(0.9,0.98)" --clip-norm 10.0 \
-  --max-update 400000 --max-tokens 20000 --max-target-positions 3000 --update-freq 1 \
-  --seed 1 --num-workers 8 --max-epoch 3 --save-interval 1
+  --max-update 400000 --max-tokens 20000 --max-target-positions 3000 --update-freq 3 \
+  --seed 1 --fp16 --num-workers 8 --max-epoch 400 --save-interval 10

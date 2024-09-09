@@ -14,5 +14,4 @@ conv_version	s2t_transformer
 attention_dropout	0.1
 enable_afs_t	True
 enable_afs_f	True
-training	False
 encoder_freezing_updates	500
