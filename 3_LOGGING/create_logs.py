@@ -1,28 +1,26 @@
 import os
 
-# Input log file
-task = "doc"
-variants = ['afs_slurm', 'cv_afs', 'cv_feats', 'cv_feats_2']
-variants = ['0.2_ctxt_2', '0.2_extended', '0.2', '1_extended', 'ep_base', 'ep_doc_0.001', 'ep_doc_full_0.005', 'ep_doc_integrated', 'ep_doc_wav_test', 'ep_doc_wav_test_curr']
+# Specify path to .out directory and to directory to save logs
+input_dir = ""
+log_dir = "./3_LOGGING/logs"
+afs = False
 
-for variant in variants:
-    input_log_file = f"/Users/tomalcorn/Documents/University/pg/diss/{task}/{variant}.txt"
+log_dir = '/Users/tomalcorn/Documents/University/pg/diss/3_LOGGING/logs'
+# Create logs directory if it doesn't exist
+os.makedirs(log_dir, exist_ok=True)
 
-
-    log_dir = '/Users/tomalcorn/Documents/University/pg/diss/3_LOGGING/logs'
-    # Create logs directory if it doesn't exist
-    os.makedirs(log_dir, exist_ok=True)
-
-    # Output TSV file
-    output_tsv_file = log_dir + f"/{task}_{variant}_loss.tsv"
+for filename in os.listdir(input_dir):
+    
+    
+    input_log_file = os.path.join(input_dir, filename)
+    output_tsv_file = log_dir + f"{filename}_loss.tsv"
 
     # TSV header
-
-    if 'afs' in task:
+    if 'afs':
         header = "Datetime\tsplit\tepoch\tloss\tnll_loss\tl0_reg\tppl\twps\tups\twpb\tbsz\tnum_updates\tlr\tgnorm\tclip\tloss_scale\ttrain_wall\tgb_free\twall\tnum_updates\tbest_loss"
     else:
         header = "Datetime\tsplit\tepoch\tloss\tnll_loss\tmultitask_source_letter_loss\tmultitask_target_letter_loss\tmultitask_decoder_target_ctc_loss\tppl\twps\tups\twpb\tbsz\tnum_updates\tmultitask_source_letter_loss_weight\tmultitask_target_letter_loss_weight\tmultitask_decoder_target_ctc_loss_weight\tlr\tgnorm\tclip\tloss_scale\ttrain_wall\tgb_free\twall\tnum_updates\tbest_loss"
-    # afs finetune header
+    
 
     # Function to process a line and convert it to the TSV format
     def process_line(line):
