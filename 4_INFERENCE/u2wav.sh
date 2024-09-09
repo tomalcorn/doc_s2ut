@@ -1,7 +1,7 @@
-RESULTS_PATH="/Users/tomalcorn/Documents/University/pg/diss/4_INFERENCE/inference_base_1"
+RESULTS_PATH=""
 GEN_SUBSET="test"
-VOCODER_CKPT="/Users/tomalcorn/Documents/University/pg/diss/2_TRAINING/models/vocoder"
-VOCODER_CFG="/Users/tomalcorn/Documents/University/pg/diss/2_TRAINING/models/vox_config.json"
+VOCODER_CKPT=""
+VOCODER_CFG=""
 
 cd fairseq
 

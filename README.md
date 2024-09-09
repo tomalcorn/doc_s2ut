@@ -76,4 +76,12 @@ fairseq-train $DATA_ROOT \
 
 ## 4: Inference
 
+- Run `infer.sh` with the given arguments to generate discrete unit sequences for the test set.
+- Run `u2wav.sh` with given arguments to convert discrete unit sequences to .wav files
+  
+## 5: Evaluation
+
+To evaluate the produced .wav files first they must be transcribed after which they can be scored. The scoring methods provided here are ASR-Bleu and ASR-COMET. I use `Whisper-medium` for the transcription and `SACREBLEU` for scoring. To use these methods, first run `download_whisper.py` and/or `download_comet.py` with the path to `0_PRETRAINED_MODELS` as the only argument.
+
+
 
