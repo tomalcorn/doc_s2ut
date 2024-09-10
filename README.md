@@ -1,19 +1,21 @@
 
-
 To begin data preparation for S2UT or document-level S2UT, you need:
+
 - `SRC_AUDIO` and `TGT_AUDIO` directories with audio files for paired source and target audio. Each pair of files should be named identically in their respective directories.
 - Optional: If you only have target text, use 6: TTS to create TGT_AUDIO from target text directory
 - Information on how to split data in training, validation and test sets
 - Pretrained checkpoints for hubert model, quantisation model, vocoder and vocoder config downloaded into 0_PRETRAINED_MODELS:
   
 ### Unit-based HiFi-GAN Vocoder
+
 Unit config | Unit size | Vocoder dataset | Model
 |---|---|---|---
 [HuBERT Base, Librispeech](https://github.com/fairinternal/fairseq-py/tree/main/examples/hubert), layer 6 | 100 | [LJSpeech](https://keithito.com/LJ-Speech-Dataset/) | [ckpt](https://dl.fbaipublicfiles.com/fairseq/speech_to_speech/vocoder/code_hifigan/hubert_base_100_lj/g_00500000), [config](https://dl.fbaipublicfiles.com/fairseq/speech_to_speech/vocoder/code_hifigan/hubert_base_100_lj/config.json)
 
 ### Hubert and quantisation models
+
 * [HuBERT-Base](https://dl.fbaipublicfiles.com/hubert/hubert_base_ls960.pt)
-* [Quantisation Model](https://dl.fbaipublicfiles.com/textless_nlp/gslm/hubert/km100/km.bin)
+- [Quantisation Model](https://dl.fbaipublicfiles.com/textless_nlp/gslm/hubert/km100/km.bin)
 
 ## 1: Data Prep
 
@@ -27,6 +29,7 @@ Unit config | Unit size | Vocoder dataset | Model
 3. Run `data_prep.sh` with relevant arguments.
 4. Run `dict_maker.sh` to prepare multitask information. Currently only `'source_letter'`, `'target_letter'` and/or `'decoder_tgt_ctc'` are supported.
 5. Create `config_multitask.yaml`. Below is an example of the config used for S2UT reduced with two encoder multitasks (`source_letter`, `target_letter`) and one decoder CTC task (`decoder_target_ctc`).
+
 ```
 source_letter:  # $TASK_NAME
    decoder_type: transformer
@@ -50,7 +53,10 @@ decoder_target_ctc:
 
 ## 2: Training
 
-- Run `train.sh` with relevant paths to `$DATA_ROOT` and `$MODEL_DIR` to save model checkpoints. As an example:
+If only training a document model with AFS skip this section and go to section 6.
+
+1. Run `train.sh` with relevant paths to `$DATA_ROOT` and `$MODEL_DIR` to save model checkpoints. As an example:
+
 ```
 fairseq-train $DATA_ROOT \
   --config-yaml config.yaml --multitask-config-yaml config_multitask.yaml \
@@ -65,6 +71,7 @@ fairseq-train $DATA_ROOT \
   --max-update 400000 --max-tokens 20000 --max-target-positions 3000 --update-freq 4 \
   --seed 1 --fp16 --num-workers 8
 ```
+
 - Adjust `--update-freq` accordingly for different GPUs. In the above we set `--update-freq` 4 to simulate training with 4 GPUs.
 - If using multiple validation sets, replace `--validation-subset dev` with `--validation-subset dev,dev2` etc
 
@@ -92,14 +99,23 @@ Training and using AFS is done in 3 stages. First a separate encoder-decoder ASR
 
 1. Download ASR data. I used Voxpopuli Spanish audio to English text data available here:
 
-* [Voxpopuli data](https://github.com/facebookresearch/voxpopuli)
-
-Then split data into two sets for asr training and asr + afs finetuning. Split each set into training, validation and testing subsets.
-2. In `0_prep` run `0_prep_asr_data.sh` with given arguments. Run twice with `$AUDIOROOT` set to path to dataset used for asr training, then for finetuning. `$TRANSCRIPTIONS` should be a .tsv file, for example:
-```
-TRANSCRIPTIONS="${AFS_DATA_ROOT}/manifests/asr_pretraining.tsv"
-```
-3. 
+- [Voxpopuli data](https://github.com/facebookresearch/voxpopuli)
 
 
+2. Make a transcription .tsv manifest file for the full dataset. The file should have the following header:
+   
+   ```
+    audio   text
+   ```
+`audio` should be the file basename for each file without any extention, `text` should be the corresponding transcription.
+3. Run `0_prep_asr_data.sh` with given arguments. Run twice with `$AUDIOROOT` set to path to dataset used for asr training, then for finetuning. Use `AFS_DATA_ROOT_1` for asr pretraining and `AFS_DATA_ROOT_2` for finetuning. `$TRANSCRIPTIONS` should be the .tsv file made in step 2.
+4. Run `1_train_asr.sh` with `AFS_DATA_ROOT_1`.
+5. Run `2_finetune.sh`. `$PRETRAIN_CKPT` should be the `checkpoint_best.pt` file from the directory you used for `$SAVE_DIR` in the previous step. Use `AFS_DATA_ROOT_2`, and set a new `$SAVE_DIR` for this step. If you want to train AFS with temporal and/or feature pruning include `--enable_afs_t` `--enable_afs_f`. Increase `--l0-norm-reg-scalar` from 0 to 1 to increase AFS induced sparsity.
+6. Optional: to average the final 5 checkpoints which I find improves stability, run `average_cckpts.sh` with `$MODEL_DIR` set to the previous `$SAVE_DIR`.
+7. Optional: to evaluate the word error rate (WER) of the ASR and ASR + AFS models run `asr_infer.sh` with `LS_ROOT` set to `AFS_DATA_ROOT_2`. `$CHECKPOINT_FILENAME` should be `checkpoint_best.pt` or `checkpoint_avg.pt` if you followed the previous step. 
+8. Run `3_train_st.sh` with `DATA_ROOT`. Set a new `$SAVE_DIR` to save checkpoints for S2UT + AFS model. `$FEAT_EXTTRACTOR` should be path to `chekpoint_best.pt` file from the previous step's `$SAVE_DIR`. `FEAT_EXTRACTOR_ARGS` should be the path to `feat_extractor_args.tsv` in `6_AFS`.
+9. Inference and evaluation can then be performed as normal following sections 4 and 5 respectively.
 
+## 7: Document-level S2UT
+
+After training an S2UT model with AFS 

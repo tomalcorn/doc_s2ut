@@ -1,10 +1,11 @@
-DATA_ROOT="/Users/tomalcorn/Documents/University/pg/diss/DATA_ROOT"
-MODEL_DIR="/Users/tomalcorn/Documents/University/pg/diss/mine/models"
-SAVE_DIR="/Users/tomalcorn/Documents/University/pg/diss/7_AFS/ST"
-FEAT_EXTRACTOR="/Users/tomalcorn/Documents/University/pg/diss/7_AFS/LOCAL/checkpoint_best.pt"
-FEAT_EXTRACTOR_ARGS="/Users/tomalcorn/Documents/University/pg/diss/7_AFS/feat_extractor_args.tsv"
+#!/bin/bash
 
-cd fairseq/
+cd fairseq
+
+DATA_ROOT="/work/tc062/tc062/s2517781/DATA_ROOT"
+SAVE_DIR="/work/tc062/tc062/s2517781/2_TRAINING/models/BASELINE_AFS_1.0"
+FEAT_EXTRACTOR="/work/tc062/tc062/s2517781/7_AFS/ASR_AFS_SAVE_BIG/checkpoint_best.pt"
+FEAT_EXTRACTOR_ARGS=""
 
 fairseq-train $DATA_ROOT \
   --config-yaml config.yaml --multitask-config-yaml config_multitask.yaml \
@@ -17,5 +18,7 @@ fairseq-train $DATA_ROOT \
   --save-dir ${SAVE_DIR} \
   --lr 0.0005 --lr-scheduler inverse_sqrt --warmup-init-lr 1e-7 --warmup-updates 10000 \
   --optimizer adam --adam-betas "(0.9,0.98)" --clip-norm 10.0 \
-  --max-update 400000 --max-tokens 20000 --max-target-positions 3000 --update-freq 3 \
-  --seed 1 --fp16 --num-workers 8 --max-epoch 400 --save-interval 10
+  --max-update 400000 --max-tokens 20000 --update-freq 4 \
+  --seed 1 --fp16 --num-workers 8 --save-interval 10
+
+echo "Job finished!"

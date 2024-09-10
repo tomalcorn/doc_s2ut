@@ -1,6 +1,6 @@
 AFS_DATA_ROOT=""
-AUDIOROOT="/work/tc062/tc062/s2517781/VOXPOPULI/SRC_AUDIO"
-TRANSCRIPTIONS="/work/tc062/tc062/s2517781/VOXPOPULI/manifests/voxpop_all.tsv"
+AUDIOROOT=""
+TRANSCRIPTIONS=""
 VOCAB_SIZE=10000
 
 cd /Users/tomalcorn/Documents/University/pg/diss/fairseq
