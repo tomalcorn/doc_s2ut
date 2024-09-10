@@ -36,7 +36,7 @@ def main():
     parser = argparse.ArgumentParser()
     
     parser.add_argument("--manifest-dir", type=str, help="path to output manifest directory")
-    parser.add_argument("--root-dir", type=str, help="path to audio dir split")
+    parser.add_argument("--audio-dir", type=str, help="path to audio dir split")
     parser.add_argument("--lang-code", type=str, help="short language code for source or target language")
     parser.add_argument("--split", type=str, help="split name: train, dev etc.")
     
@@ -48,7 +48,7 @@ def main():
     # check exists
     os.makedirs(manifest_directory, exist_ok=True)
 
-    root_directory = args.root_dir
+    root_directory = args.audio_dir
     lang = args.lang_code
     folder = args.split
     manifest_path = f"{manifest_directory}/{lang}_{folder}.tsv"

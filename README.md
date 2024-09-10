@@ -19,16 +19,16 @@ Unit config | Unit size | Vocoder dataset | Model
 
 ## 1: Data Prep
 
-1. Optional: Run `dir1vdir2.sh` to move any file in `SRC_AUDIO` and not `TGT_AUDIO` and vice versa to backup directories.
-2. Run `convert_and_downsample.sh` to convert source and/or target audio to wav if necessary and to downsample to 16kHz. `--input_dir` should be path to `SRC_AUDIO` or `TGT_AUDIO`.
+1. Optional: Run `0_dir1vdir2.sh` to move any file in `SRC_AUDIO` and not `TGT_AUDIO` and vice versa to backup directories.
+2. Run `1_convert_and_downsample.sh` to convert source and/or target audio to wav if necessary and to downsample to 16kHz. `--input_dir` should be path to `SRC_AUDIO` or `TGT_AUDIO`.
 3. Split downsampled files in `SRC_AUDIO` and `TGT_AUDIO` into splits, eg `train`, `dev`, `test`...
-4. In `MANIFESTS` create `src_$SPLIT.tsv` and `tgt_$SPLIT.tsv` for each split, with format:
+4. In `DATA_ROOT` create `src_$SPLIT.tsv` and `tgt_$SPLIT.tsv` for each split, with format:
 `$FILE_ID.wav \t "corresponding text"`
-1. Run `manifest_maker.sh` to create manifest files for `SRC_AUDIO` and `TGT_AUDIO` with the relevant arguments.
-2. Run `quantise_tgts.sh` to quantise target audio for each split in `TGT_AUDIO`
-3. Run `data_prep.sh` with relevant arguments.
-4. Run `dict_maker.sh` to prepare multitask information. Currently only `'source_letter'`, `'target_letter'` and/or `'decoder_tgt_ctc'` are supported.
-5. Create `config_multitask.yaml`. Below is an example of the config used for S2UT reduced with two encoder multitasks (`source_letter`, `target_letter`) and one decoder CTC task (`decoder_target_ctc`).
+5. Run `2_manifest_maker.sh` to create manifest files for `SRC_AUDIO` and `TGT_AUDIO` with the relevant arguments.
+6. Run `3_quantise_tgts.sh` to quantise target audio for each split in `TGT_AUDIO`
+7. Run `4_data_prep.sh` with relevant arguments.
+8. Run `5_multitask_prep.sh` to prepare multitask information. Currently only `'source_letter'`, `'target_letter'` and/or `'decoder_tgt_ctc'` are supported.
+9. Create `config_multitask.yaml`. Below is an example of the config used for S2UT reduced with two encoder multitasks (`source_letter`, `target_letter`) and one decoder CTC task (`decoder_target_ctc`).
 
 ```
 source_letter:  # $TASK_NAME
@@ -108,14 +108,21 @@ Training and using AFS is done in 3 stages. First a separate encoder-decoder ASR
     audio   text
    ```
 `audio` should be the file basename for each file without any extention, `text` should be the corresponding transcription.
-3. Run `0_prep_asr_data.sh` with given arguments. Run twice with `$AUDIOROOT` set to path to dataset used for asr training, then for finetuning. Use `AFS_DATA_ROOT_1` for asr pretraining and `AFS_DATA_ROOT_2` for finetuning. `$TRANSCRIPTIONS` should be the .tsv file made in step 2.
-4. Run `1_train_asr.sh` with `AFS_DATA_ROOT_1`.
-5. Run `2_finetune.sh`. `$PRETRAIN_CKPT` should be the `checkpoint_best.pt` file from the directory you used for `$SAVE_DIR` in the previous step. Use `AFS_DATA_ROOT_2`, and set a new `$SAVE_DIR` for this step. If you want to train AFS with temporal and/or feature pruning include `--enable_afs_t` `--enable_afs_f`. Increase `--l0-norm-reg-scalar` from 0 to 1 to increase AFS induced sparsity.
+3. Run `0_prep_asr_data.sh` with given arguments. Run twice with `$AUDIOROOT` set to path to dataset used for asr training, then for finetuning. Use `DATA_ROOT_AFS_1` for asr pretraining and `DATA_ROOT_AFS_2` for finetuning. `$TRANSCRIPTIONS` should be the .tsv file made in step 2.
+4. Run `1_train_asr.sh` with `DATA_ROOT_AFS_1`.
+5. Run `2_finetune.sh`. `$PRETRAIN_CKPT` should be the `checkpoint_best.pt` file from the directory you used for `$SAVE_DIR` in the previous step. Use `DATA_ROOT_AFS_2`, and set a new `$SAVE_DIR` for this step. If you want to train AFS with temporal and/or feature pruning include `--enable_afs_t` `--enable_afs_f`. Increase `--l0-norm-reg-scalar` from 0 to 1 to increase AFS induced sparsity.
 6. Optional: to average the final 5 checkpoints which I find improves stability, run `average_cckpts.sh` with `$MODEL_DIR` set to the previous `$SAVE_DIR`.
-7. Optional: to evaluate the word error rate (WER) of the ASR and ASR + AFS models run `asr_infer.sh` with `LS_ROOT` set to `AFS_DATA_ROOT_2`. `$CHECKPOINT_FILENAME` should be `checkpoint_best.pt` or `checkpoint_avg.pt` if you followed the previous step. 
+7. Optional: to evaluate the word error rate (WER) of the ASR and ASR + AFS models run `asr_infer.sh` with `LS_ROOT` set to `DATA_ROOT_AFS_2`. `$CHECKPOINT_FILENAME` should be `checkpoint_best.pt` or `checkpoint_avg.pt` if you followed the previous step. 
 8. Run `3_train_st.sh` with `DATA_ROOT`. Set a new `$SAVE_DIR` to save checkpoints for S2UT + AFS model. `$FEAT_EXTTRACTOR` should be path to `chekpoint_best.pt` file from the previous step's `$SAVE_DIR`. `FEAT_EXTRACTOR_ARGS` should be the path to `feat_extractor_args.tsv` in `6_AFS`.
 9. Inference and evaluation can then be performed as normal following sections 4 and 5 respectively.
 
 ## 7: Document-level S2UT
 
-After training an S2UT model with AFS 
+After training an S2UT model with AFS, this model can be finetuned for document translation. For the concatenative-ST approach you need a **pre-segmented dataset**, in other words a dataset where the samples are longer passages of speech. Split these samples into segments where each sample should be named with at least two fields separated by '_': the document id and either the start time of the segment in the document or some other ordered index to refer to the segments position in the document. For example, `doc116734_2.006_3.566`. Move these samples into `SRC_AUDIO_DOC` and `TGT_AUDIO_DOC`, making sure that pairs of samples are named identically in the two folders.
+
+1. Run preprocessing steps 1-7 from section 1, but using `SRC_AUDIO_DOC`, `TGT_AUDIO_DOC` and `DATA_ROOT_DOC` instead of the original values.
+2. Run `7_DOC/0_add_doc_info.sh` to add document information to the created manifest files. `$SPLITS` should be a comma separated string of dataset split names, eg. "train,dev,test". `$DOC_CTXT_SIZE` is the number of prefix source and target segments the model is trained with. 
+3. Continue with the preprocessing steps from section 1.
+4. Run `1_train_doc.sh`. `$PRETRAINING_PATH` should point to the pretrained S2UT + AFS save directory. `$FEAT_EXTRACTOR` and `$FEAT_EXTRACTOR_ARGS` should point to the ASR + AFS save directory and `6_AFS/feat_extractor_args.tsv` respectively. Set `--doc-context-size` to the same used in step 2. By default the loss will be computed only over the current segment, I find better performance comes from computing the loss over the full sequence including prefix segments. To do this, include `--extended-loss`. 
+5. Run `2_infer_doc.sh`. Ensure `--doc-context-size` is set to the same as from previous steps. To use SWBD-IMED interpolation include `--use-imed` and set `--imed-gamma` between 0 and 1, where closer one results in greater reliance on the sentence-level prediction, closer to 0 results in greater reliance on the document-level prediction.
+6. Perform evaluation according to section 5.

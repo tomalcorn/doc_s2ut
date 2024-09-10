@@ -6,22 +6,22 @@ if [ "$#" -ne 4 ]; then
     exit 1
 fi
 
-# Absolute path to MANIFEST_DIR
-MANIFEST_DIR=""
+# Absolute path to DATA_ROOT
+DATA_ROOT=""
 
 # train, dev, test etc
 SPLIT=""
 
 # Path to SRC_AUDIO or TGT_AUDIO directories
-ROOT_DIR=""
-ROOT_DIR="${ROOT_DIR}/${SPLIT}"
+AUDIO_DIR=""
+AUDIO_DIR="${AUDIO_DIR}/${SPLIT}"
 
 # Short code for source or target language
 LANG_CODE=""
 
 # Run the Python script with the provided arguments
-python3 1_DATA_PREP/manifest_maker.py
-    --manifest-dir "$MANIFEST_DIR" \
-    --root-dir "$ROOT_DIR" \
+python3 1_DATA_PREP/manifest_maker.py \
+    --manifest-dir "$DATA_ROOT" \
+    --audio-dir "$AUDIO_DIR" \
     --lang-code "$LANG_CODE" \
     --split "$SPLIT"
