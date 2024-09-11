@@ -55,8 +55,9 @@ mv ./km.bin ./quantisation_model.bin
 To begin data preparation for S2UT or document-level S2UT, you need:
 
 - Paired source and target speech. Optionally if you have source speech and target text or vice versa use section 0: Text-To-Speech to synthesise the text to speech.
-- The above work used Fisher and CVSS Spanish-English datasets:
-- [CVSS Spanish-English data](https://storage.googleapis.com/cvss/cvss_c_v1.0/cvss_c_es_en_v1.0.tar.gz)
+- The above work used Fisher and CVSS Spanish-English datasets. For CVSS I used Common Voice corpus 7.0:
+- [CVSS Spanish-English data - source audio](https://commonvoice.mozilla.org/en/datasets)
+- [CVSS Spanish-English data - target audio](https://storage.googleapis.com/cvss/cvss_c_v1.0/cvss_c_es_en_v1.0.tar.gz)
 - [Fisher data](https://catalog.ldc.upenn.edu/LDC2014T23)
 - Information on how to split data in training, validation and test sets.
 - Move all source audio files to `SRC_AUDIO` and all target audio to `TGT_AUDIO`. Each pair of files should be named identically in their respective directories.
@@ -80,9 +81,9 @@ If your dataset is paired source speech with target text then you first need to 
 
 1. Optional: Run `0_dir1vdir2.sh` to move any file in `SRC_AUDIO` and not `TGT_AUDIO` and vice versa to backup directories.
 2. Run `1_convert_and_downsample.sh` to convert source and/or target audio to wav if necessary and to downsample to 16kHz. `--input_dir` should be path to `SRC_AUDIO` or `TGT_AUDIO`.
-3. Split downsampled files in `SRC_AUDIO` and `TGT_AUDIO` into splits, eg `train`, `dev`, `test`...
-4. In `DATA_ROOT` create `src_$SPLIT.tsv` and `tgt_$SPLIT.tsv` for each split, with format:
-`$FILE_ID.wav \t "corresponding text"`
+3. In `DATA_ROOT` create `src_$SPLIT.tsv` and `tgt_$SPLIT.tsv` for each dataset split, with format:
+`$FILE_ID.wav\t$corresponding_text`
+4. Split downsampled files in `SRC_AUDIO` and `TGT_AUDIO` into splits, eg `SRC_AUDIO/train`, `SRC_AUDIO/dev`, `SRC_AUDIO/test`... If using CVSS and you followed the previous step this can be quickly done by running `python 1_DATA_PREP/split_cvss.py`.
 5. Run `2_manifest_maker.sh` to create manifest files for `SRC_AUDIO` and `TGT_AUDIO` with the relevant arguments.
 6. Run `3_quantise_tgts.sh` to quantise target audio for each split in `TGT_AUDIO`
 7. Run `4_data_prep.sh` with relevant arguments.

@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Define the directories
-DIR1="/work/tc062/tc062/s2517781/SRC_AUDIO_EP/test"
-DIR2="/work/tc062/tc062/s2517781/TGT_AUDIO_EP/test"
-BACKUPDIR1="/work/tc062/tc062/s2517781/SRC_AUDIO_EP/test_backup"
-BACKUPDIR2="/work/tc062/tc062/s2517781/TGT_AUDIO_EP/test_backup"
+DIR1=""
+DIR2=""
+BACKUPDIR1=""
+BACKUPDIR2=""
 
 # Ensure backup directories exist
 mkdir -p "$BACKUPDIR1"

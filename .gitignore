@@ -7,3 +7,11 @@ AFS_DATA_ROOT_wstuff
 cvss
 fairseqvenv
 PRETRAINED_MODELS
+AFS_DATA_ROOT_wstuff
+cv
+DATA_ROOT
+get_local_split.py
+rename_files.sh
+.vscode
+SRC_AUDIO
+TGT_AUDIO
