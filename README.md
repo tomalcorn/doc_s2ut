@@ -17,6 +17,22 @@ Unit config | Unit size | Vocoder dataset | Model
 * [HuBERT-Base](https://dl.fbaipublicfiles.com/hubert/hubert_base_ls960.pt)
 - [Quantisation Model](https://dl.fbaipublicfiles.com/textless_nlp/gslm/hubert/km100/km.bin)
 
+## 0: Optional: Text-to-Speech
+
+If your dataset is paired source speech with target text then you first need to synthesise the target text into speech with Text-To-Speech (TTS). Otherwise skip to section 1.
+
+1. First follow steps 1-4 from section 1. Then to download Fastpitch 2 and relevant data.
+2. Run `0_download_fastpitch.sh` with `$MODEL_DIR` set to the path to `PRETRAINED_MODELS`.
+3. Run `1_fastpitch.sh` for each dataset split eg. train, dev, test etc. `OUTPUT_DIR` should be the path to `TGT_AUDIO`. `FASTPITCH_DIR` should be the path to the fastpitch model and should look something like this:
+
+```
+   ./PRETRAINED_MODELS/fastpitch/modelsmodels--facebook--fastspeech2-en-ljspeech/snapshots/a3e3e5e2e62bb7ca7514b11aa469e9c5b01a20bf
+```
+
+`$NLTK` should be the path to `NLTK` save directory in `PRETRAINED_MODELS`.
+4. Proceed with step 5 from section 1. 
+
+
 ## 1: Data Prep
 
 1. Optional: Run `0_dir1vdir2.sh` to move any file in `SRC_AUDIO` and not `TGT_AUDIO` and vice versa to backup directories.
@@ -114,7 +130,7 @@ Training and using AFS is done in 3 stages. First a separate encoder-decoder ASR
 6. Optional: to average the final 5 checkpoints which I find improves stability, run `average_cckpts.sh` with `$MODEL_DIR` set to the previous `$SAVE_DIR`.
 7. Optional: to evaluate the word error rate (WER) of the ASR and ASR + AFS models run `asr_infer.sh` with `LS_ROOT` set to `DATA_ROOT_AFS_2`. `$CHECKPOINT_FILENAME` should be `checkpoint_best.pt` or `checkpoint_avg.pt` if you followed the previous step. 
 8. Run `3_train_st.sh` with `DATA_ROOT`. Set a new `$SAVE_DIR` to save checkpoints for S2UT + AFS model. `$FEAT_EXTTRACTOR` should be path to `chekpoint_best.pt` file from the previous step's `$SAVE_DIR`. `FEAT_EXTRACTOR_ARGS` should be the path to `feat_extractor_args.tsv` in `6_AFS`.
-9. Inference and evaluation can then be performed as normal following sections 4 and 5 respectively.
+9. Inference and evaluation can then be performed as normal following sections 5 and 6 respectively.
 
 ## 7: Document-level S2UT
 
@@ -125,4 +141,6 @@ After training an S2UT model with AFS, this model can be finetuned for document 
 3. Continue with the preprocessing steps from section 1.
 4. Run `1_train_doc.sh`. `$PRETRAINING_PATH` should point to the pretrained S2UT + AFS save directory. `$FEAT_EXTRACTOR` and `$FEAT_EXTRACTOR_ARGS` should point to the ASR + AFS save directory and `6_AFS/feat_extractor_args.tsv` respectively. Set `--doc-context-size` to the same used in step 2. By default the loss will be computed only over the current segment, I find better performance comes from computing the loss over the full sequence including prefix segments. To do this, include `--extended-loss`. 
 5. Run `2_infer_doc.sh`. Ensure `--doc-context-size` is set to the same as from previous steps. To use SWBD-IMED interpolation include `--use-imed` and set `--imed-gamma` between 0 and 1, where closer one results in greater reliance on the sentence-level prediction, closer to 0 results in greater reliance on the document-level prediction.
-6. Perform evaluation according to section 5.
+6. Perform evaluation according to section 6.
+
+
