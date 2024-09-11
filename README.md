@@ -1,3 +1,19 @@
+# Document-level Speech to discrete unit translation
+
+## Installation and setup
+
+- Clone this repository with `git clone https://github.com/tomalcorn/doc_s2ut.git`.
+- Make a python virtual environment with Python version >= 3.8
+- Download necessary dependencies, then clone doc-s2ut fairseq version and perform editable install:
+
+```
+pip install -r requirements.txt
+git clone --branch doc-s2ut https://github.com/tomalcorn/fairseq.git
+cd fairseq
+pip install --editable ./
+```
+
+- Clone the doc-s2ut branch of Fairseq with `git clone --branch doc-s2ut https://github.com/tomalcorn/fairseq.git`
 
 To begin data preparation for S2UT or document-level S2UT, you need:
 
@@ -30,8 +46,7 @@ If your dataset is paired source speech with target text then you first need to 
 ```
 
 `$NLTK` should be the path to `NLTK` save directory in `PRETRAINED_MODELS`.
-4. Proceed with step 5 from section 1. 
-
+4. Proceed with step 5 from section 1.
 
 ## 1: Data Prep
 
