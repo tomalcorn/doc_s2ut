@@ -2,36 +2,64 @@
 
 ## Installation and setup
 
-- Clone this repository with `git clone https://github.com/tomalcorn/doc_s2ut.git`.
+- Clone this repository:
+  
+  ```
+  git clone https://github.com/tomalcorn/doc_s2ut.git
+  cd doc_s2ut
+  ```
+
 - Make a python virtual environment with Python version >= 3.8
-- Download necessary dependencies, then clone doc-s2ut fairseq version and perform editable install:
+- Download necessary dependencies, then clone the doc-s2ut fairseq branch and install fairseq:
+
+    ```
+    pip install -r requirements.txt
+    git clone --branch doc-s2ut https://github.com/tomalcorn/fairseq.git
+    cd fairseq
+    pip install --editable ./
+
+    # on MacOS:
+    # CFLAGS="-stdlib=libc++" pip install --editable ./
+
+    # to install the latest stable release (0.10.x)
+    # pip install fairseq
+    ```
+
+Run the code below to do the following:
+
+- create `SRC_AUDIO` and `TGT_AUDIO` directories for paired source and target audio.
+- create `DATA_ROOT` directory for storing information necessary for translation.
+- Download pretrained checkpoints for hubert model, quantisation model, vocoder and vocoder config into `PRETRAINED_MODELS`:
 
 ```
-pip install -r requirements.txt
-git clone --branch doc-s2ut https://github.com/tomalcorn/fairseq.git
-cd fairseq
-pip install --editable ./
+mkdir SRC_AUDIO
+mkdir TGT_AUDIO
+mkdir DATA_ROOT
+mkdir PRETRAINED_MODELS
+cd PRETRAINED_MODELS
+
+# Download Vocoder and Vocoder config
+wget https://dl.fbaipublicfiles.com/fairseq/speech_to_speech/vocoder/code_hifigan/hubert_base_100_lj/g_00500000
+wget https://dl.fbaipublicfiles.com/fairseq/speech_to_speech/vocoder/code_hifigan/hubert_base_100_lj/config.json
+mv ./config.json ./vocoder_config.json
+mv ./g_00500000 ./vocoder
+
+# Download Hubert model and Quantisation model
+wget https://dl.fbaipublicfiles.com/hubert/hubert_base_ls960.pt
+wget https://dl.fbaipublicfiles.com/textless_nlp/gslm/hubert/km100/km.bin
+mv ./km.bin ./quantisation_model.bin
 ```
 
-- Clone the doc-s2ut branch of Fairseq with `git clone --branch doc-s2ut https://github.com/tomalcorn/fairseq.git`
+## Data
 
 To begin data preparation for S2UT or document-level S2UT, you need:
 
-- `SRC_AUDIO` and `TGT_AUDIO` directories with audio files for paired source and target audio. Each pair of files should be named identically in their respective directories.
-- Optional: If you only have target text, use 6: TTS to create TGT_AUDIO from target text directory
-- Information on how to split data in training, validation and test sets
-- Pretrained checkpoints for hubert model, quantisation model, vocoder and vocoder config downloaded into 0_PRETRAINED_MODELS:
-  
-### Unit-based HiFi-GAN Vocoder
-
-Unit config | Unit size | Vocoder dataset | Model
-|---|---|---|---
-[HuBERT Base, Librispeech](https://github.com/fairinternal/fairseq-py/tree/main/examples/hubert), layer 6 | 100 | [LJSpeech](https://keithito.com/LJ-Speech-Dataset/) | [ckpt](https://dl.fbaipublicfiles.com/fairseq/speech_to_speech/vocoder/code_hifigan/hubert_base_100_lj/g_00500000), [config](https://dl.fbaipublicfiles.com/fairseq/speech_to_speech/vocoder/code_hifigan/hubert_base_100_lj/config.json)
-
-### Hubert and quantisation models
-
-* [HuBERT-Base](https://dl.fbaipublicfiles.com/hubert/hubert_base_ls960.pt)
-- [Quantisation Model](https://dl.fbaipublicfiles.com/textless_nlp/gslm/hubert/km100/km.bin)
+- Paired source and target speech. Optionally if you have source speech and target text or vice versa use section 0: Text-To-Speech to synthesise the text to speech.
+- The above work used Fisher and CVSS Spanish-English datasets:
+- [CVSS Spanish-English data](https://storage.googleapis.com/cvss/cvss_c_v1.0/cvss_c_es_en_v1.0.tar.gz)
+- [Fisher data](https://catalog.ldc.upenn.edu/LDC2014T23)
+- Information on how to split data in training, validation and test sets.
+- Move all source audio files to `SRC_AUDIO` and all target audio to `TGT_AUDIO`. Each pair of files should be named identically in their respective directories.
 
 ## 0: Optional: Text-to-Speech
 

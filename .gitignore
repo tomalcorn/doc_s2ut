@@ -4,3 +4,6 @@ work/
 cirrus/
 fairseq/
 AFS_DATA_ROOT_wstuff
+cvss
+fairseqvenv
+PRETRAINED_MODELS
