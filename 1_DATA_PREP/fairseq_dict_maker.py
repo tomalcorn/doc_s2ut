@@ -23,9 +23,9 @@ def main():
         for split in splits:
             location = tasks[task][:3].lower()
             # print(location)
-            in_wavs = "./" + tasks[task] + split
-            in_tsv = f'{data_root}/{location}_{split}.tsv'
-            output_folder = f'{data_root}{task}/'
+            in_wavs = os.path.join(data_root, f"../{tasks[task]}/{split}")
+            in_tsv = os.path.join(data_root, f'{location}_{split}.tsv')
+            output_folder = os.path.join(data_root, task)
             task_dict.task_dic_maker(task, in_wavs, in_tsv, split, output_folder)
 
     for task in tasks:

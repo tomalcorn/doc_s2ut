@@ -88,8 +88,6 @@ def task_dic_maker(task, in_wavs, in_tsv, split, output_folder):
 
         print(f"Processed lines: {processed_lines}")
         print(f"Skipped lines: {skipped_lines}")
-        print(f"Empty lines: {empty_lines}")
-        print(f"Total lines in input: {total_lines}")
 
     return processed_lines, skipped_lines, empty_lines, total_lines
             

@@ -87,8 +87,9 @@ If your dataset is paired source speech with target text then you first need to 
 5. Run `2_manifest_maker.sh` to create manifest files for `SRC_AUDIO` and `TGT_AUDIO` with the relevant arguments.
 6. Run `3_quantise_tgts.sh` to quantise target audio for each split in `TGT_AUDIO`
 7. Run `4_data_prep.sh` with relevant arguments.
-8. Run `5_multitask_prep.sh` to prepare multitask information. Currently only `'source_letter'`, `'target_letter'` and/or `'decoder_tgt_ctc'` are supported.
-9. Create `config_multitask.yaml`. Below is an example of the config used for S2UT reduced with two encoder multitasks (`source_letter`, `target_letter`) and one decoder CTC task (`decoder_target_ctc`).
+8. Run `5_multitask_prep.sh` to prepare multitask information. Currently only `'source_letter'`, `'target_letter'` and/or `'decoder_tgt_ctc'` are supported. `$TASK_DICT` maps the tasks to the audio directories relevant to that task for example:
+`"{'decoder_target_ctc': 'TGT_AUDIO'}"`
+9. Create `./DATA_ROOT/config_multitask.yaml`. Below is an example of the config used for S2UT reduced with two encoder multitasks (`source_letter`, `target_letter`) and one decoder CTC task (`decoder_target_ctc`).
 
 ```
 source_letter:  # $TASK_NAME
