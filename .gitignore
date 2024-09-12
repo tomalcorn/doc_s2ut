@@ -15,3 +15,4 @@ rename_files.sh
 .vscode
 SRC_AUDIO
 TGT_AUDIO
+**/__pycache__/

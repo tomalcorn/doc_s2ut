@@ -49,6 +49,7 @@ def main():
     os.makedirs(manifest_directory, exist_ok=True)
 
     root_directory = args.audio_dir
+    print(root_directory)
     lang = args.lang_code
     folder = args.split
     manifest_path = f"{manifest_directory}/{lang}_{folder}.tsv"

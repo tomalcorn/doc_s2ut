@@ -1,17 +1,19 @@
 #!/bin/bash
 
-cd fairseq
+pushd fairseq
+
+LANG_CODE=""
+SPLIT=""
+DATA_ROOT=""
 
 # Path to pretrained hubert model and k-means clustering model
 CKPT_PATH=""
-KM_MODEL_PATH=""
+QUANT_MODEL=""
 
-# Path to manifest file: $MANIFEST_DIR/${LANG_CODE}_${SPLIT}.tsv
-MANIFEST=""
+# path to out file: ../TGT_AUDIO/${SPLIT}.txt
+OUT_QUANTIZED_FILE=""
 
-# path to out file: ./TGT_AUDIO/${SPLIT}.txt
-OUT_QUANTIZED_FILE=/work/tc062/tc062/s2517781/TGT_AUDIO_FISHER/train.txt
-
+MANIFEST="${DATA_ROOT}/${LANG_CODE}_${SPLIT}.tsv"
 N_CLUSTERS=100
 TYPE=hubert
 LAYER=6
@@ -19,11 +21,13 @@ LAYER=6
 
 PYTHONPATH=. python examples/textless_nlp/gslm/speech2unit/clustering/quantize_with_kmeans.py \
     --feature_type $TYPE \
-    --kmeans_model_path $KM_MODEL_PATH \
+    --kmeans_model_path $QUANT_MODEL \
     --acoustic_model_path $CKPT_PATH \
     --layer $LAYER \
     --manifest_path $MANIFEST \
     --out_quantized_file_path $OUT_QUANTIZED_FILE \
     --extension ".wav"
+
+popd
 
 echo "Job finished!"

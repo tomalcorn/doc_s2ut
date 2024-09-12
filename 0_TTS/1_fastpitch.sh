@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd fairseq
+pushd fairseq
 
 DATA_ROOT="/work/tc062/tc062/s2517781/11_FISHER/manifests"
 OUTPUT_DIR="/scratch/space1/tc062/s2517781/FISHER/TGT_AUDIO"
@@ -12,5 +12,7 @@ python ./0_TTS/1_generate_speech/fastpitch.py \
     --output_dir ${OUTPUT_DIR} --manifest_dir ${MANIFESTDIR} \
     --model-dir ${FASTPITCH_DIR} --nltk ${NLTK} --device "cuda" \
     --split ${SPLIT}
+
+popd
 
 echo "Job finished!"

@@ -9,7 +9,6 @@ def main():
     parser = argparse.ArgumentParser()
     
     parser.add_argument("--data-root", type=str)
-    parser.add_argument("--manifest-dir", type=str)
     parser.add_argument("--task-dict", type=str)
     parser.add_argument("--splits", type=str)
     
@@ -18,7 +17,6 @@ def main():
     data_root = args.data_root
     tasks = eval(args.task_dict)
     splits = args.splits.split(',')
-    manifest_dir = args.manifest_dir
 
 
     for task in tasks:
@@ -26,7 +24,7 @@ def main():
             location = tasks[task][:3].lower()
             # print(location)
             in_wavs = "./" + tasks[task] + split
-            in_tsv = f'{manifest_dir}{location}_{split}.tsv'
+            in_tsv = f'{data_root}/{location}_{split}.tsv'
             output_folder = f'{data_root}{task}/'
             task_dict.task_dic_maker(task, in_wavs, in_tsv, split, output_folder)
 
