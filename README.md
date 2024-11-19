@@ -1,8 +1,10 @@
 # Document-level Speech to discrete unit translation
 
-This repository contains the accompanying code to my dissertation project: [The eﬀect of extra-sentential
-context on Speech to Discrete
-Unit Translation](https://github.com/tomalcorn/doc_s2ut/blob/main/Speech_to_Discrete_Unit_Translation.pdf)
+This repository contains the accompanying code to my dissertation project: [The eﬀect of extra-sentential context on Speech to Discrete Unit Translation](https://github.com/tomalcorn/doc_s2ut/blob/main/Speech_to_Discrete_Unit_Translation.pdf). In the aforememntioned project I implement a Speech to Discrete Unit Model described in [Lee et al. (2021)](https://arxiv.org/pdf/2107.05604), whose implementation is described in brief here, and can be found in full in their [Fairseq github repo](https://github.com/facebookresearch/fairseq/blob/main/examples/speech_to_speech/docs/direct_s2st_discrete_units.md). 
+
+I then extend this model to incorporate extra-sentential context from the input. Extending the context window like this necesitates removing redundant information from the input: for this I use Adaptive Feature Selection ([Zhang et al. (2020)](https://arxiv.org/pdf/2010.08518)).
+
+To implement the sentence-level Speech to Discrete Unit translation model, follow steps 0-5 listed below. To add AFS and extend the context window to incorporate extra-sentential information follow the remaining steps. 
 
 ## Installation and setup
 
