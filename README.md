@@ -31,11 +31,7 @@ To implement the sentence-level Speech to Discrete Unit translation model, follo
     # pip install fairseq
     ```
 
-4. Run the code below to do the following:
-
-- create `SRC_AUDIO` and `TGT_AUDIO` directories for paired source and target audio.
-- create `DATA_ROOT` directory for storing information necessary for translation.
-- Download pretrained checkpoints for hubert model, quantisation model, vocoder and vocoder config into `PRETRAINED_MODELS`:
+4. Run the code below:
 
     ```
     mkdir SRC_AUDIO
