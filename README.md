@@ -1,5 +1,9 @@
 # Document-level Speech to discrete unit translation
 
+This repository contains the accompanying code to my dissertation project: [The eﬀect of extra-sentential
+context on Speech to Discrete
+Unit Translation]()
+
 ## Installation and setup
 
 - Clone this repository:
