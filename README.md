@@ -4,7 +4,7 @@ This repository contains the accompanying code to my dissertation project: [The 
 
 I then extend this model to incorporate extra-sentential context from the input. Extending the context window like this necesitates removing redundant information from the input: for this I use Adaptive Feature Selection ([Zhang et al. (2020)](https://arxiv.org/pdf/2010.08518)).
 
-To implement the sentence-level Speech to Discrete Unit translation model, follow steps 0-5 listed below. To add AFS and extend the context window to incorporate extra-sentential information follow the remaining steps. 
+To implement the sentence-level Speech to Discrete Unit translation model, follow steps 0-5 listed below. To add AFS and extend the context window to incorporate extra-sentential information follow the remaining steps.
 
 ## Installation and setup
 
