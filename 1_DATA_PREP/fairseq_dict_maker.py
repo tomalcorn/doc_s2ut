@@ -9,14 +9,22 @@ def main():
     parser = argparse.ArgumentParser()
     
     parser.add_argument("--data-root", type=str)
-    parser.add_argument("--task-dict", type=str)
+    parser.add_argument("--tasks", type=str)
     parser.add_argument("--splits", type=str)
+    parser.add_argument("--src-audio", type=str)
+    parser.add_argument("--tgt-audio", type=str)
     
     args = parser.parse_args()
     
     data_root = args.data_root
-    tasks = eval(args.task_dict)
     splits = args.splits.split(',')
+
+    # Setup multitasks    
+    tasks = args.tasks.split(',')
+    multitask_dict_options = {"decoder_target_ctc": args.tgt_audio, 
+                      "source_letter": args.src_audio, 
+                      "target_letter": args.tgt_audio}
+    tasks = {key: multitask_dict_options[key] for key in tasks}
 
 
     for task in tasks:
