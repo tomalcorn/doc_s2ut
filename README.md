@@ -2,7 +2,7 @@
 
 This repository contains the accompanying code to my dissertation project: [The eﬀect of extra-sentential
 context on Speech to Discrete
-Unit Translation]()
+Unit Translation](https://github.com/tomalcorn/doc_s2ut/blob/main/Speech_to_Discrete_Unit_Translation.pdf)
 
 ## Installation and setup
 
