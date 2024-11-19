@@ -167,12 +167,11 @@ Training and using AFS is done in 3 stages. First a separate encoder-decoder ASR
 - [Voxpopuli data](https://github.com/facebookresearch/voxpopuli)
 
 
-2. Make a transcription .tsv manifest file for the full dataset. The file should have the following header:
+2. Make a transcription .tsv manifest file for the full dataset. `audio` should be the file basename for each file without any extension, `text` should be the corresponding transcription. The file should have the following header:
    
    ```
     audio   text
    ```
-`audio` should be the file basename for each file without any extension, `text` should be the corresponding transcription.
 3. Run `0_prep_asr_data.sh` with given arguments. Run twice with `$AUDIOROOT` set to path to dataset used for asr training, then for finetuning. Use `DATA_ROOT_AFS_1` for asr pretraining and `DATA_ROOT_AFS_2` for finetuning. `$TRANSCRIPTIONS` should be the .tsv file made in step 2.
 4. Run `1_train_asr.sh` with `DATA_ROOT_AFS_1`.
 5. Run `2_finetune.sh`. `$PRETRAIN_CKPT` should be the `checkpoint_best.pt` file from the directory you used for `$SAVE_DIR` in the previous step. Use `DATA_ROOT_AFS_2`, and set a new `$SAVE_DIR` for this step. If you want to train AFS with temporal and/or feature pruning include `--enable_afs_t` `--enable_afs_f`. Increase `--l0-norm-reg-scalar` from 0 to 1 to increase AFS induced sparsity.
