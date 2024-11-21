@@ -5,7 +5,7 @@ This repository contains the accompanying code to my master's dissertation proje
 I then extend this model to incorporate extra-sentential context from the input. Extending the context window like this necesitates removing redundant information from the input: for this I use Adaptive Feature Selection ([Zhang et al. (2020)](https://arxiv.org/pdf/2010.08518)).
 
 <p align="center">
-  <img src="https://github.com/tomalcorn/doc_s2ut/blob/main/CSLT%20-%20presentation%203.gif" />
+  <img src="https://github.com/tomalcorn/doc_s2ut/blob/main/AFS%20into%20S2UT.gif" />
 </p>
 
 To implement the sentence-level Speech to Discrete Unit translation model, follow steps 1-5 listed below. To add AFS and extend the context window to incorporate extra-sentential information follow the remaining steps.
