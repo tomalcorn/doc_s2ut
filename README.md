@@ -57,7 +57,7 @@ To implement the sentence-level Speech to Discrete Unit translation model, follo
 To begin data preparation for S2UT or document-level S2UT, you need:
 
 - Paired source and target speech. Optionally if you have source speech and target text or vice versa use section 0: Text-To-Speech to synthesise the text to speech.
-- The [above work](https://github.com/tomalcorn/doc_s2ut/blob/main/Speech_to_Discrete_Unit_Translation.pdf) used Fisher and CVSS Spanish-English datasets. For CVSS I used Common Voice corpus 7.0:
+- In [my experiments](https://github.com/tomalcorn/doc_s2ut/blob/main/Speech_to_Discrete_Unit_Translation.pdf) I used Fisher and CVSS Spanish-English datasets. For CVSS I used Common Voice corpus 7.0:
 - [CVSS Spanish-English data - source audio](https://commonvoice.mozilla.org/en/datasets)
 - [CVSS Spanish-English data - target audio](https://storage.googleapis.com/cvss/cvss_c_v1.0/cvss_c_es_en_v1.0.tar.gz)
 - [Fisher data](https://catalog.ldc.upenn.edu/LDC2014T23)
