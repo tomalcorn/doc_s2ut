@@ -1,4 +1,4 @@
-# Document-level Speech to discrete unit translation
+# Document-level Speech to Discrete Unit Translation
 
 This repository contains the accompanying code to my master's dissertation project: [The eﬀect of extra-sentential context on Speech to Discrete Unit Translation](https://github.com/tomalcorn/doc_s2ut/blob/main/Speech_to_Discrete_Unit_Translation.pdf). In the aforememntioned project I implement a Speech to Discrete Unit Translation (S2UT) Model described in [Lee et al. (2021)](https://arxiv.org/pdf/2107.05604), whose implementation is described in brief here, and can be found in full in their [Fairseq github repo](https://github.com/facebookresearch/fairseq/blob/main/examples/speech_to_speech/docs/direct_s2st_discrete_units.md). 
 
